@@ -117,7 +117,7 @@ function patch(parent, patches, index = 0) {
             parent.replaceChild(createElement(patches.newNode), el);
             break;
         case REMOVE:
-            return parent.removeChild(el);
+            parent.removeChild(el);
             break;
         case UPDATE:
             const { props, children } = patches;
