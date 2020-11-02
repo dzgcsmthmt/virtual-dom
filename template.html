@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   
+</head>
+
+<body>
+    <script type="text/template" id="template">
+        <% for(var i = 0; i < this.posts.length; i++) {
+            var post = this.posts[i]; %>
+            <% if(!post.expert){ %>
+                <span>post is null</span>
+            <% } else { %>
+                <a href="#"><% post.expert %> at <% post.time %></a>
+            <% } %>
+        <% } %><span>the end</span>
+    </script>
+    <script>
+        var reg = /<%([^%>]+)?%>/g, 
+            regOut = /(^\s+(if|for|else|switch|case|break|{|}))(.*)?/g, 
+            code = 'var r=[];\n', 
+            cursor = 0,
+            match = null;
+
+            // var tpl = 'Hei, my name is <% name %>, and I\'m <%info.age%> years old.';
+            /*var tpl = document.getElementById('template').innerHTML.trim();
+            var data = {
+                name: "Barret Lee",
+                info: {age: 20}
+            };
+
+            var result = tpl.replace(reg,function($0,$1){
+                // console.log($0,$1);
+                let path = $1.trim().split('.');
+                var val = data;
+                while(path.length){
+                    val = val[path.shift()];
+                }
+                return val;
+            })
+
+            console.log(result);*/
+
+
+            var data = {
+                "posts": [{
+                    "expert": "content 1",
+                    "time": "yesterday"
+                },{
+                    "expert": "content 2",
+                    "time": "today"
+                },{
+                    "expert": "content 3",
+                    "time": "tomorrow"
+                },{
+                    "expert": "",
+                    "time": "eee"
+                }]
+            };
+
+            var tplEngine = function(tpl, data) {
+                var reg = /<%([^%>]+)?%>/g, 
+                    regOut = /(^\s+(if|for|else|switch|case|break|{|}))(.*)?/g, 
+                    code = 'var r=[];\n', 
+                    cursor = 0,
+                    match = null;
+                while(match = reg.exec(tpl)){
+                    if(cursor < match.index){
+                        code += 'r.push("' + escape(tpl.substring(cursor,match.index).trim()) + '")\n';
+                    };
+
+                    if(match[1].match(regOut)){
+                        code += match[1] + '\n';
+                    }else{
+                        code += 'r.push(' + match[1] + ')\n';
+                    }
+                    cursor = match.index + match[0].length;
+                }
+
+                code += 'r.push("' + escape(tpl.substring(cursor).trim()) + '")\n';
+                code += 'return r.join("");'
+                return new Function(code).call(data);
+            }
+
+            function escape(str){
+                return str.replace(/\r?\n/g,'').replace(/"/g,'\\"').replace(/'/g,"\\'");
+            }
+            console.log(tplEngine(document.getElementById('template').innerHTML.trim(),data))
+
+            /*function render(data){
+                return new Function(`
+                var str = [];
+                for(var i = 0; i < this.posts.length; i++) {
+                    var post = this.posts[i];
+                    if(!post.expert){
+                        str.push('<span>post is null</span>');
+                    }else{
+                        str.push('<a href="#">' + post.expert +　' at ' + post.time + '</a>');
+                    }
+                }
+                return str.join('');`).call(data);
+            }
+
+            console.log(render(data));*/
+
+
+    </script>
+</body>
+
+</html>
